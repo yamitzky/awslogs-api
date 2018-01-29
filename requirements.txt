@@ -1,0 +1,5 @@
+flask
+connexion
+inflection
+gunicorn
+https://github.com/yamitzky/awslogs/archive/master.tar.gz

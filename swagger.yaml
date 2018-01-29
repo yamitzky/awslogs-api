@@ -1,0 +1,145 @@
+swagger: "2.0"
+
+info:
+  title: "awslogs-api"
+  version: "1.0"
+
+paths:
+  /groups:
+    get:
+      summary: List groups
+      operationId: api.groups
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Name of group
+          schema:
+            $ref: '#/definitions/Groups'
+          examples:
+            groups: ['/ecs/foo', '/aws/lambda/bar']
+      parameters:
+        - name: log_group_prefix
+          in: query
+          type: string
+          description: List only groups matching the prefix
+
+  /streams:
+    get:
+      summary: List streams
+      operationId: api.streams
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Name of stream
+          schema:
+            $ref: '#/definitions/Streams'
+          examples:
+            streams: ['d624867e-1e0c-4cae-a390-e3df7178d28d', '17799f84-d0a1-4313-8833-2d2cbc95d594']
+      parameters:
+        - name: log_group_name
+          in: query
+          type: string
+          required: true
+          description: log group name
+        - name: start
+          in: query
+          type: string
+          default: '{{streams_start_default}}'
+          description: Start time
+        - name: end
+          in: query
+          type: string
+          description: End time
+
+  /logs:
+    get:
+      summary: Get logs
+      operationId: api.logs
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Name of group
+          schema:
+            $ref: '#/definitions/Logs'
+          examples:
+            logs: [{
+              "event_id": "12345678",
+              "ingestion_time": 1517229997000,
+              "log_stream_name": "17799f84-d0a1-4313-8833-2d2cbc95d594",
+              "message": "INFO: example",
+              "timestamp": 1517229997000
+              }]
+      parameters:
+        - name: log_group_name
+          in: query
+          type: string
+          required: true
+          description: log group name
+        - name: log_stream_name
+          in: query
+          type: string
+          default: "{{logs_log_stream_name_default}}"
+          description: log stream name
+        - name: filter_name
+          in: query
+          type: string
+          description:  A valid CloudWatch Logs filter pattern to use for
+                        filtering the response. If not provided, all the
+                        events are matched.
+        - name: start
+          in: query
+          type: string
+          default: '{{logs_start_default}}'
+          description: Start time
+        - name: end
+          in: query
+          type: string
+          description: End time
+        - name: watch
+          in: query
+          type: boolean
+          default: false
+          description: Query for new log lines constantly. If set to true, response will be stream(newline delimited JSON).
+
+definitions:
+  Groups:
+    type: object
+    properties:
+      groups: 
+        type: array
+        items:
+          $ref: '#/definitions/Group'
+  Group:
+    type: string
+  Streams:
+    type: object
+    properties:
+      streams: 
+        type: array
+        items:
+          $ref: '#/definitions/Stream'
+  Stream:
+    type: string
+  Logs:
+    type: object
+    properties:
+      logs:
+        type: array
+        items:
+          $ref: '#/definitions/Log'
+  Log:
+    type: object
+    properties:
+      log_stream_name:
+        type: string
+      event_id:
+        type: string
+      timestamp:
+        type: integer
+      ingestion_time:
+        type: integer
+      message:
+        type: string
