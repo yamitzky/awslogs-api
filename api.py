@@ -1,6 +1,8 @@
 import json
+import os
 
 from flask import jsonify, request, Response
+from flask_cors import CORS
 import connexion
 import inflection
 from awslogs import AWSLogs
@@ -50,6 +52,8 @@ def snake_keys(dic):
 
 
 app = connexion.FlaskApp(__name__)
+if 'CORS_ALLOW_ORIGIN' in os.environ:
+    CORS(app.app, origins=os.environ['CORS_ALLOW_ORIGIN'])
 app.add_api('swagger.yaml', arguments=config)
 if __name__ == '__main__':
     app.run()
