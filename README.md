@@ -19,3 +19,5 @@ docker run -p 5000:5000 yamitzky/awslogs-api
 ## Usage
 
 It provides Swagger UI. Browse http://localhost:5000/ui
+
+![swagger ui screenshot](https://raw.githubusercontent.com/yamitzky/awslogs-api/master/swagger.png)
